@@ -1,0 +1,53 @@
+version: "3.5"
+services:
+    mariadb:
+      image: mariadb:10.1
+      container_name: one-mariadb
+      working_dir: /application
+      volumes:
+        - ./back:/application
+      environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE=one
+        - MYSQL_USER=one
+        - MYSQL_PASSWORD=one
+      ports:
+        - "20003:3306"
+
+    adminer:
+      image: adminer
+      restart: always
+      ports:
+        - 20001:8080
+
+    webserver:
+      image: nginx:alpine
+      container_name: one-webserver
+      working_dir: /application
+      volumes:
+          - ./back:/application
+          - ./back/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      ports:
+       - "20000:80"
+      depends_on:
+      - php-fpm
+
+    php-fpm:
+      build: back/php-fpm
+      container_name: one-php-fpm
+      working_dir: /application
+      volumes:
+        - ./back:/application
+        - ./back/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+
+    app:
+      container_name: app
+      build:
+        context: './front'
+      volumes:
+        - './front:/usr/src/app'
+        - '/usr/src/app/node_modules'
+      ports:
+        - '3000:3000'
+      environment:
+        - NODE_ENV=development
