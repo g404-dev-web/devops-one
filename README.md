@@ -46,7 +46,7 @@ Identifiants du serveur MySQL :
 - Utilisateur / Mot de passe : root / root
 - Utilisateur / Mot de passe : one / one
 
-####React
+#### React
 
 Le serveur de développement react est accessible sur le port 3000.
 
